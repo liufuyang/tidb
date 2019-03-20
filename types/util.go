@@ -30,12 +30,75 @@ var uintSizeTable = [21]uint64{
 } // maxUint is 18446744073709551615 and it has 20 digits
 
 // LenOfUint64Fast efficiently calculate the string character lengths of an uint64 as input
+// Optimized for input x mostly range between 0 to 99999
 func LenOfUint64Fast(x uint64) int {
-	for i := 1; ; i++ {
-		if x <= uintSizeTable[i] {
-			return i
+	if x > uintSizeTable[3] { // 4 - 20
+		if x > uintSizeTable[5] { // 6 - 20, mid at 12
+			if x > uintSizeTable[12] { // 13 - 20, mid at 16
+				if x > uintSizeTable[16] { // 17 - 20, mid at 18
+					if x > uintSizeTable[18] { // 19 - 20
+						if x > uintSizeTable[19] {
+							return 20
+						}
+						return 19
+					}
+					// 17 - 18
+					if x > uintSizeTable[17] {
+						return 18
+					}
+					return 17
+				}
+				// 13 - 16, mid at 14
+				if x > uintSizeTable[14] { // 15 - 16
+					if x > uintSizeTable[15] {
+						return 16
+					}
+					return 15
+				}
+				// 13 - 14
+				if x > uintSizeTable[13] {
+					return 14
+				}
+				return 13
+			}
+			// 6 - 12, mid at 9
+			if x > uintSizeTable[9] { // 10 - 12, mid at 11
+				if x > uintSizeTable[11] { // 12 - 12
+					return 12
+				}
+				// 10 - 11
+				if x > uintSizeTable[10] {
+					return 11
+				}
+				return 10
+			}
+			// 6 - 9, mid at 7
+			if x > uintSizeTable[7] { // 8 - 9
+				if x > uintSizeTable[8] {
+					return 9
+				}
+				return 8
+			}
+			// 6 - 7
+			if x > uintSizeTable[6] {
+				return 7
+			}
+			return 6
 		}
+		// 4 - 5
+		if x > uintSizeTable[4] {
+			return 5
+		}
+		return 4
 	}
+	// 1 - 3
+	if x > uintSizeTable[1] {
+		if x > uintSizeTable[2] {
+			return 3
+		}
+		return 2
+	}
+	return 1
 }
 
 // LenOfInt64Fast efficiently calculate the string character lengths of an int64 as input
